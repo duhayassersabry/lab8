@@ -1,0 +1,28 @@
+[
+  {
+    "courseId": "C101",
+    "title": "Intro to Java",
+    "description": "Basics of Java",
+    "lessons": [
+      {
+        "title": "Setup",
+        "content": "Install JDK and IDE"
+      },
+      {
+        "title": "Syntax",
+        "content": "Java syntax basics"
+      }
+    ]
+  },
+  {
+    "courseId": "sdjkflk",
+    "title": "asjkdf\\",
+    "description": "",
+    "lessons": [
+      {
+        "title": "ajsdhfk",
+        "content": "skldjf"
+      }
+    ]
+  }
+]

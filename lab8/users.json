@@ -1,0 +1,50 @@
+[
+  {
+    "enrolledCourses": [],
+    "progress": {},
+    "id": "S1000",
+    "name": "Student One",
+    "email": "student@example.com",
+    "password": "pass",
+    "role": "Student"
+  },
+  {
+    "id": "I1000",
+    "name": "Instructor One",
+    "email": "instructor@example.com",
+    "password": "pass",
+    "role": "Instructor"
+  },
+  {
+    "enrolledCourses": [
+      "C101"
+    ],
+    "progress": {
+      "C101": {
+        "Setup": true,
+        "Syntax": true
+      }
+    },
+    "id": "S1763500581901",
+    "name": "mariam@mahmodusdhfk",
+    "email": "mariam@mahmodusdhfk",
+    "password": "asjdfk",
+    "role": "Student"
+  },
+  {
+    "enrolledCourses": [],
+    "progress": {},
+    "id": "S1763500646021",
+    "name": "mariam@aksdjf",
+    "email": "mariam@aksdjf",
+    "password": "asdjfk",
+    "role": "Student"
+  },
+  {
+    "id": "I1763500652206",
+    "name": "mariam@aksdjf",
+    "email": "mariam@aksdjf",
+    "password": "asdjfk",
+    "role": "Instructor"
+  }
+]
