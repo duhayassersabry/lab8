@@ -108,5 +108,37 @@
     "email": "yasmina@example.com",
     "password": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
     "role": "Student"
+  },
+  {
+    "enrolledCourses": [
+      "C1763914058401"
+    ],
+    "progress": {
+      "C1763914058401": {
+        "leson1": true,
+        "lesson2": true,
+        "lesson3": true
+      }
+    },
+    "certificates": [
+      {
+        "certificateId": "CERT-b01905c4",
+        "studentEmail": "y@gmail",
+        "courseId": "C1763914058401",
+        "issuedAt": "Nov 23, 2025, 10:26:25 PM"
+      }
+    ],
+    "id": "S1763929499511",
+    "name": "yasmina",
+    "email": "y@gmail",
+    "password": "ef6df27cd3092018ee94b664da1fc5f6b2e1753167344d9df1f5ef7ec51d5428",
+    "role": "Student"
+  },
+  {
+    "id": "A1763929647008",
+    "name": "u@gmail",
+    "email": "u@gmail",
+    "password": "9fc82759b24a291243bb4223b96560dc812c15955c796259737a86f0f5573b98",
+    "role": "Admin"
   }
 ]
