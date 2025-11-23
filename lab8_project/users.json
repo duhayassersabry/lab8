@@ -64,5 +64,49 @@
     "email": "mariam@",
     "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
     "role": "Admin"
+  },
+  {
+    "enrolledCourses": [],
+    "progress": {},
+    "certificates": [],
+    "id": "S1763928689451",
+    "name": "mariam@",
+    "email": "mariam@",
+    "password": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "role": "Student"
+  },
+  {
+    "enrolledCourses": [],
+    "progress": {},
+    "certificates": [],
+    "id": "S1763928700969",
+    "name": "",
+    "email": "@example.com",
+    "password": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "role": "Student"
+  },
+  {
+    "id": "I1763928714405",
+    "name": "sde",
+    "email": "sde@example.com",
+    "password": "56db980898174b24c59eb0f5497a292bcdab2e43f47c34034f9b4c06c0f52832",
+    "role": "Instructor"
+  },
+  {
+    "id": "A1763928733186",
+    "name": "sde",
+    "email": "sde",
+    "password": "56db980898174b24c59eb0f5497a292bcdab2e43f47c34034f9b4c06c0f52832",
+    "role": "Admin"
+  },
+  {
+    "enrolledCourses": [],
+    "progress": {},
+    "certificates": [],
+    "id": "S1763928763287",
+    "name": "yasmina",
+    "email": "yasmina@example.com",
+    "password": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "role": "Student"
   }
 ]
