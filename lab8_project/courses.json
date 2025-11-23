@@ -1,0 +1,53 @@
+[
+  {
+    "courseId": "C1763911240066",
+    "title": "course1",
+    "description": "",
+    "status": "APPROVED",
+    "instructorId": "I1763911236057",
+    "lessons": [
+      {
+        "title": "lesson1",
+        "content": "alskdfj"
+      }
+    ]
+  },
+  {
+    "courseId": "C1763913577145",
+    "title": "mariam",
+    "description": "",
+    "status": "APPROVED",
+    "instructorId": "I1763911236057",
+    "lessons": [
+      {
+        "title": "lesson1",
+        "content": "lesson"
+      },
+      {
+        "title": "lesson2",
+        "content": "lesson"
+      }
+    ]
+  },
+  {
+    "courseId": "C1763914058401",
+    "title": "course5",
+    "description": "",
+    "status": "APPROVED",
+    "instructorId": "I1763911236057",
+    "lessons": [
+      {
+        "title": "leson1",
+        "content": "sdf"
+      },
+      {
+        "title": "lesson2",
+        "content": "hui"
+      },
+      {
+        "title": "lesson3",
+        "content": "jsod"
+      }
+    ]
+  }
+]
