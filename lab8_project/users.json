@@ -1,0 +1,68 @@
+[
+  {
+    "enrolledCourses": [
+      "C1763911240066",
+      "C1763913577145",
+      "C1763914058401"
+    ],
+    "progress": {
+      "C1763911240066": {
+        "lesson1": true
+      },
+      "C1763913577145": {
+        "lesson1": true,
+        "lesson2": true
+      },
+      "C1763914058401": {
+        "leson1": true,
+        "lesson2": true,
+        "lesson3": true
+      }
+    },
+    "certificates": [
+      {
+        "certificateId": "CERT-32ca3b8e",
+        "studentEmail": "mariam@",
+        "courseId": "C1763911240066",
+        "issuedAt": "Nov 23, 2025, 5:59:15 PM"
+      },
+      {
+        "certificateId": "CERT-53025596",
+        "studentEmail": "mariam@",
+        "courseId": "C1763911240066",
+        "issuedAt": "Nov 23, 2025, 5:59:18 PM"
+      },
+      {
+        "certificateId": "CERT-138ac3ed",
+        "studentEmail": "mariam@",
+        "courseId": "C1763913577145",
+        "issuedAt": "Nov 23, 2025, 6:02:50 PM"
+      },
+      {
+        "certificateId": "CERT-9c49dc06",
+        "studentEmail": "mariam@",
+        "courseId": "C1763914058401",
+        "issuedAt": "Nov 23, 2025, 6:09:28 PM"
+      }
+    ],
+    "id": "S1763911208942",
+    "name": "mariam@",
+    "email": "mariam@",
+    "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "role": "Student"
+  },
+  {
+    "id": "I1763911236057",
+    "name": "mariam@",
+    "email": "mariam@",
+    "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "role": "Instructor"
+  },
+  {
+    "id": "A1763911277805",
+    "name": "mariam@",
+    "email": "mariam@",
+    "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "role": "Admin"
+  }
+]
