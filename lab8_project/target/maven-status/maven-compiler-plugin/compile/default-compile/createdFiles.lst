@@ -3,6 +3,7 @@ data\JsonDatabaseManager$1.class
 services\QuizService.class
 models\User.class
 app\Main.class
+services\AnalyticsService.class
 gui\InstructorDashboard.class
 gui\StudentDashboard$1.class
 gui\LoginFrame.class
@@ -10,9 +11,11 @@ gui\AdminDashboard.class
 gui\CertificateFrame.class
 gui\ChartFrame.class
 models\Certificate.class
+services\AnalyticsService$LessonStats.class
 gui\StudentDashboard$2.class
 gui\StudentDashboard.class
 models\Instructor.class
+models\StudentCourseProgress.class
 models\Admin.class
 models\Question.class
 models\QuizAttempt.class
@@ -23,5 +26,4 @@ models\Lesson.class
 models\Student.class
 models\Course.class
 models\Quiz.class
-com\mycompany\lab8_project\sjhkdf.class
 services\CertificateService.class

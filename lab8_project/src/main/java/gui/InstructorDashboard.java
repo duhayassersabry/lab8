@@ -14,7 +14,7 @@ public class InstructorDashboard extends JFrame {
     private JList<String> list;
     private JButton addCourseBtn, addLessonBtn, refreshBtn;
     private CourseService courseService = new CourseService();
-    private JsonDatabaseManager db = new JsonDatabaseManager();
+    // private JsonDatabaseManager db = new JsonDatabaseManager(); // Not needed if using CourseService
 
     public InstructorDashboard(Instructor ins){
         this.instructor = ins;
@@ -48,7 +48,8 @@ public class InstructorDashboard extends JFrame {
 
     private void loadCourses(){
         model.clear();
-        List<Course> courses = courseService.allCourses(false);
+        // Assuming courseService.allCourses(false) loads all courses
+        List<Course> courses = courseService.allCourses(false); 
         for (Course c: courses) {
             if (instructor.getId().equals(c.getInstructorId())) model.addElement(c.getCourseId() + " - " + c.getTitle() + " [" + c.getStatus()+"]");
         }
@@ -58,22 +59,53 @@ public class InstructorDashboard extends JFrame {
         String id = "C" + System.currentTimeMillis();
         String title = JOptionPane.showInputDialog(this,"Course title:");
         if (title == null || title.trim().isEmpty()) return;
-        Course c = new Course(id, title, "", instructor.getId());
-        courseService.addCourse(c);
+        
+        // Input description for better data quality
+        String description = JOptionPane.showInputDialog(this,"Course description:");
+        if (description == null) description = "";
+        
+        Course c = new Course(id, title, description, instructor.getId());
+        courseService.addCourse(c); // Use addCourse or updateCourse for saving
         loadCourses();
     }
 
     private void addLesson(){
         String sel = list.getSelectedValue();
         if (sel == null) { JOptionPane.showMessageDialog(this, "Select course."); return; }
-        String courseId = sel.split(" - ")[0];
+        
+        // 1. Extract Course ID
+        String courseId = sel.split(" - ")[0].trim();
         Course c = courseService.find(courseId);
-        if (c == null) return;
+        if (c == null) { JOptionPane.showMessageDialog(this, "Course not found."); return; }
+        
         String title = JOptionPane.showInputDialog(this,"Lesson title:");
-        String content = JOptionPane.showInputDialog(this,"Lesson content:");
-        Lesson l = new Lesson(title, content);
+        if (title == null || title.trim().isEmpty()) return;
+
+        // Use a JTextArea for multi-line content input
+        JTextArea contentArea = new JTextArea(10, 30);
+        JScrollPane scrollPane = new JScrollPane(contentArea);
+        
+        int result = JOptionPane.showConfirmDialog(this, scrollPane, "Enter Lesson Content:", 
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        
+        String content = (result == JOptionPane.OK_OPTION) ? contentArea.getText() : null;
+        if (content == null || content.trim().isEmpty()) return;
+        
+        // 2. IMPORTANT: Generate unique lessonId and use the new constructor
+        String lessonId = "L" + System.currentTimeMillis();
+        Lesson l = new Lesson(lessonId, title, content); // Using the constructor with ID
+        
+        // 3. Update the Course object
         c.getLessons().add(l);
-        courseService.addCourse(c);
-        JOptionPane.showMessageDialog(this,"Lesson added (status still: "+c.getStatus()+"). Admin must approve course to make it visible.");
+        
+        // 4. Persist the updated Course object
+        // NOTE: You should use an update method here, not addCourse again, 
+        // to prevent overwriting or creating duplicates if the service handles it simply.
+        courseService.updateCourse(c); 
+        
+        JOptionPane.showMessageDialog(this,"Lesson added successfully! (ID: " + lessonId + ").");
     }
+    
+    // You should ensure CourseService has an updateCourse method 
+    // that saves the modified course list back to courses.json.
 }

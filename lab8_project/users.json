@@ -45,6 +45,7 @@
         "issuedAt": "Nov 23, 2025, 6:09:28 PM"
       }
     ],
+    "courseProgress": {},
     "id": "S1763911208942",
     "name": "mariam@",
     "email": "mariam@",
@@ -69,6 +70,7 @@
     "enrolledCourses": [],
     "progress": {},
     "certificates": [],
+    "courseProgress": {},
     "id": "S1763928689451",
     "name": "mariam@",
     "email": "mariam@",
@@ -79,6 +81,7 @@
     "enrolledCourses": [],
     "progress": {},
     "certificates": [],
+    "courseProgress": {},
     "id": "S1763928700969",
     "name": "",
     "email": "@example.com",
@@ -103,6 +106,7 @@
     "enrolledCourses": [],
     "progress": {},
     "certificates": [],
+    "courseProgress": {},
     "id": "S1763928763287",
     "name": "yasmina",
     "email": "yasmina@example.com",
@@ -128,6 +132,7 @@
         "issuedAt": "Nov 23, 2025, 10:26:25 PM"
       }
     ],
+    "courseProgress": {},
     "id": "S1763929499511",
     "name": "yasmina",
     "email": "y@gmail",
@@ -140,5 +145,30 @@
     "email": "u@gmail",
     "password": "9fc82759b24a291243bb4223b96560dc812c15955c796259737a86f0f5573b98",
     "role": "Admin"
+  },
+  {
+    "id": "I1763933044816",
+    "name": "rji4jewr",
+    "email": "gc@gmail.com",
+    "password": "47f888a9c2e486bfc2a24e3d8d9c3f8102dbec749d4b36b7f8c2fdc092df2ad6",
+    "role": "Instructor"
+  },
+  {
+    "enrolledCourses": [
+      "C1763913577145"
+    ],
+    "progress": {
+      "C1763913577145": {
+        "lesson1": true,
+        "lesson2": true
+      }
+    },
+    "certificates": [],
+    "courseProgress": {},
+    "id": "S1763933129849",
+    "name": "huewh",
+    "email": "ygj@gmail.com",
+    "password": "15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225",
+    "role": "Student"
   }
 ]

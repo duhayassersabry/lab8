@@ -6,10 +6,17 @@ public class Student extends User {
     private List<String> enrolledCourses = new ArrayList<>();
     private Map<String, Map<String, Boolean>> progress = new HashMap<>();
     private List<Certificate> certificates = new ArrayList<>();
-
+private Map<String, StudentCourseProgress> courseProgress = new HashMap<>();
     public Student(){ this.role="Student"; }
     public Student(String id,String name,String email,String password){
         super(id,name,email,password,"Student");
+    }
+    public Map<String, StudentCourseProgress> getCourseProgress() {
+        return courseProgress;
+    }
+
+    public void setCourseProgress(Map<String, StudentCourseProgress> courseProgress) {
+        this.courseProgress = courseProgress;
     }
     public List<String> getEnrolledCourses(){ return enrolledCourses; }
     public Map<String, Map<String, Boolean>> getProgress(){ return progress; }

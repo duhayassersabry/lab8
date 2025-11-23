@@ -1,5 +1,4 @@
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\app\Main.java
-D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\com\mycompany\lab8_project\sjhkdf.java
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\data\JsonDatabaseManager.java
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\gui\AdminDashboard.java
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\gui\CertificateFrame.java
@@ -17,7 +16,9 @@ D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\models\Que
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\models\Quiz.java
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\models\QuizAttempt.java
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\models\Student.java
+D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\models\StudentCourseProgress.java
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\models\User.java
+D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\services\AnalyticsService.java
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\services\CertificateService.java
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\services\CourseService.java
 D:\Yasmina\College\term 5\assigment\7\lab8\lab8_project\src\main\java\services\QuizService.java
