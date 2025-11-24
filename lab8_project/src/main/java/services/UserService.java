@@ -10,29 +10,27 @@ public class UserService {
 
     public UserService(){}
 
-    public User login(String email, String pass, String role) {
-        if ("Instructor".equalsIgnoreCase(role)) {
-            Instructor i = db.findInstructorByEmail(email);
-            if (i != null && db.verifyPassword(pass, i.getPassword())) return i;
-            return null;
-        } else if ("Admin".equalsIgnoreCase(role)) {
-            Admin a = db.findAdminByEmail(email);
-            if (a != null && db.verifyPassword(pass, a.getPassword())) return a;
-            return null;
-        } else {
-            Student s = db.findStudentByEmail(email);
-            if (s != null && db.verifyPassword(pass, s.getPassword())) return s;
-            return null;
-        }
+   public User login(String email, String pass, String role) {
+    if ("Instructor".equalsIgnoreCase(role)) {
+        Instructor i = db.findInstructorByEmail(email);
+        if (i != null && db.verifyPassword(pass, i.getPassword())) return i;
+        return null;
+    } else if ("Admin".equalsIgnoreCase(role)) {
+        Admin a = db.findAdminByEmail(email);
+        if (a != null && db.verifyPassword(pass, a.getPassword())) return a;
+        return null;
+    } else {
+        Student s = db.findStudentByEmail(email);
+        if (s != null && db.verifyPassword(pass, s.getPassword())) return s;
+        return null;
     }
+}
 
     public Student registerStudent(String name, String email, String password) {
-        // Check if email already exists
         if (findStudentByEmail(email) != null) {
             throw new IllegalArgumentException("Email already registered");
         }
         
-        // Validate inputs
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name is required");
         }
@@ -45,7 +43,6 @@ public class UserService {
             throw new IllegalArgumentException("Password must be at least 8 characters long");
         }
         
-        // Create and save new student
         String id = "S" + System.currentTimeMillis();
         String hashed = db.sha256Hex(password);
         Student student = new Student(id, name, email, hashed);
@@ -54,12 +51,10 @@ public class UserService {
     }
 
     public Instructor registerInstructor(String name, String email, String password) {
-        // Check if email already exists
         if (findInstructorByEmail(email) != null) {
             throw new IllegalArgumentException("Email already registered");
         }
         
-        // Validate inputs
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name is required");
         }
@@ -72,7 +67,6 @@ public class UserService {
             throw new IllegalArgumentException("Password must be at least 8 characters long");
         }
         
-        // Create and save new instructor
         String id = "I" + System.currentTimeMillis();
         String hashed = db.sha256Hex(password);
         Instructor instructor = new Instructor(id, name, email, hashed);
@@ -88,7 +82,6 @@ public class UserService {
         return a;
     }
 
-    // ... other methods ...
 
 
 

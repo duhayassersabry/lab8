@@ -3,8 +3,8 @@
     "courseId": "C1763911240066",
     "title": "course1",
     "description": "",
-    "status": "APPROVED",
     "instructorId": "I1763911236057",
+    "status": "APPROVED",
     "lessons": [
       {
         "title": "lesson1",
@@ -16,8 +16,8 @@
     "courseId": "C1763913577145",
     "title": "mariam",
     "description": "",
-    "status": "APPROVED",
     "instructorId": "I1763911236057",
+    "status": "APPROVED",
     "lessons": [
       {
         "title": "lesson1",
@@ -33,8 +33,8 @@
     "courseId": "C1763914058401",
     "title": "course5",
     "description": "",
-    "status": "APPROVED",
     "instructorId": "I1763911236057",
+    "status": "APPROVED",
     "lessons": [
       {
         "title": "leson1",
@@ -54,8 +54,102 @@
     "courseId": "C1763933053236",
     "title": "gfyfdth",
     "description": "",
-    "status": "PENDING",
     "instructorId": "I1763933044816",
+    "status": "APPROVED",
     "lessons": []
+  },
+  {
+    "courseId": "C1763940804318",
+    "title": "course check",
+    "description": "",
+    "instructorId": "I1763940788935",
+    "status": "Approved",
+    "lessons": [
+      {
+        "lessonId": "L1763940814723",
+        "title": "lesson1",
+        "content": "sdklfj",
+        "quiz": {
+          "quizId": "Q1763940835787",
+          "questions": [
+            {
+              "text": "tskdfl",
+              "options": [
+                "True",
+                "False"
+              ],
+              "correctIndex": 0
+            }
+          ],
+          "passingPercentage": 50
+        }
+      },
+      {
+        "lessonId": "L1763940845673",
+        "title": "lesson2",
+        "content": "asjkdlf",
+        "quiz": {
+          "quizId": "Q1763940854943",
+          "questions": [
+            {
+              "text": "asjkdfl",
+              "options": [
+                "True",
+                "False"
+              ],
+              "correctIndex": 0
+            }
+          ],
+          "passingPercentage": 50
+        }
+      }
+    ]
+  },
+  {
+    "courseId": "C1763941763066",
+    "title": "ahmed cours",
+    "description": "",
+    "instructorId": "I1763941752852",
+    "status": "Approved",
+    "lessons": [
+      {
+        "lessonId": "L1763941771449",
+        "title": "lesson1",
+        "content": "jhjosdf",
+        "quiz": {
+          "quizId": "Q1763941785994",
+          "questions": [
+            {
+              "text": "7 even",
+              "options": [
+                "True",
+                "False"
+              ],
+              "correctIndex": 1
+            }
+          ],
+          "passingPercentage": 50
+        }
+      },
+      {
+        "lessonId": "L1763941776289",
+        "title": "lesson2",
+        "content": "ajskldjfl",
+        "quiz": {
+          "quizId": "Q1763941798346",
+          "questions": [
+            {
+              "text": "8 even",
+              "options": [
+                "True",
+                "False"
+              ],
+              "correctIndex": 0
+            }
+          ],
+          "passingPercentage": 50
+        }
+      }
+    ]
   }
 ]

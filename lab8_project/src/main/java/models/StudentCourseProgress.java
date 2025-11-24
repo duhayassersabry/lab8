@@ -1,4 +1,3 @@
-// models/StudentCourseProgress.java
 package models;
 
 import java.io.Serializable;

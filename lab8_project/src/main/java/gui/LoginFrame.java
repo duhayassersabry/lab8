@@ -31,7 +31,6 @@ public class LoginFrame extends JFrame {
     private void initComponents() {
         mainPanel = new JPanel(new GridBagLayout());
         
-        // Common components
         roleCombo = new JComboBox<>(new String[]{"Student", "Instructor", "Admin"});
         emailField = new JTextField(20);
         passwordField = new JPasswordField(20);
@@ -42,14 +41,11 @@ public class LoginFrame extends JFrame {
         errorLabel = new JLabel(" ");
         errorLabel.setForeground(Color.RED);
         
-        // Additional registration fields
         nameField = new JTextField(20);
         confirmPasswordField = new JPasswordField(20);
         
-        // Set initial visibility
         updateViewForMode();
         
-        // Add action listeners
         loginButton.addActionListener(e -> handleLogin());
         registerButton.addActionListener(e -> handleRegistration());
         switchButton.addActionListener(e -> toggleMode());
@@ -60,53 +56,44 @@ public class LoginFrame extends JFrame {
         c.insets = new Insets(5, 5, 5, 5);
         c.fill = GridBagConstraints.HORIZONTAL;
         
-        // Title
         c.gridx = 0; c.gridy = 0; c.gridwidth = 2;
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         mainPanel.add(titleLabel, c);
         
-        // Error label
         c.gridy++; c.gridwidth = 2;
         mainPanel.add(errorLabel, c);
         
-        // Role
         c.gridy++; c.gridwidth = 1;
         mainPanel.add(new JLabel("Role:"), c);
         c.gridx = 1;
         mainPanel.add(roleCombo, c);
         
-        // Name field (for registration)
         c.gridy++; c.gridx = 0;
         mainPanel.add(new JLabel("Full Name:"), c);
         c.gridx = 1;
         mainPanel.add(nameField, c);
         
-        // Email
         c.gridy++; c.gridx = 0;
         mainPanel.add(new JLabel("Email:"), c);
         c.gridx = 1;
         mainPanel.add(emailField, c);
         
-        // Password
         c.gridy++; c.gridx = 0;
         mainPanel.add(new JLabel("Password:"), c);
         c.gridx = 1;
         mainPanel.add(passwordField, c);
         
-        // Confirm Password (for registration)
         c.gridy++; c.gridx = 0;
         mainPanel.add(new JLabel("Confirm Password:"), c);
         c.gridx = 1;
         mainPanel.add(confirmPasswordField, c);
         
-        // Buttons
         c.gridy++; c.gridx = 0; c.gridwidth = 2;
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(loginButton);
         buttonPanel.add(registerButton);
         mainPanel.add(buttonPanel, c);
         
-        // Switch mode button
         c.gridy++; c.gridx = 0; c.gridwidth = 2;
         mainPanel.add(switchButton, c);
         
@@ -126,7 +113,6 @@ public class LoginFrame extends JFrame {
         nameField.setVisible(!isLoginMode);
         confirmPasswordField.setVisible(!isLoginMode);
         
-        // Update labels
         for (Component comp : mainPanel.getComponents()) {
             if (comp instanceof JLabel) {
                 JLabel label = (JLabel) comp;
@@ -136,7 +122,6 @@ public class LoginFrame extends JFrame {
             }
         }
         
-        // Clear fields when switching modes
         if (isLoginMode) {
             nameField.setText("");
             confirmPasswordField.setText("");
@@ -164,7 +149,6 @@ public class LoginFrame extends JFrame {
                 return;
             }
             
-            // Open appropriate dashboard
             SwingUtilities.invokeLater(() -> {
                 if (user instanceof Admin) {
                     new AdminDashboard((Admin) user).setVisible(true);
@@ -188,7 +172,6 @@ public class LoginFrame extends JFrame {
         String confirmPassword = new String(confirmPasswordField.getPassword());
         String role = (String) roleCombo.getSelectedItem();
         
-        // Validate inputs
         if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             showError("All fields are required");
             return;

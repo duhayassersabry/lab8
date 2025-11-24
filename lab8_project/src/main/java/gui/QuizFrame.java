@@ -57,7 +57,6 @@ public class QuizFrame extends JFrame {
         }
         int score = quizService.evaluate(quiz, selected);
         JOptionPane.showMessageDialog(this, "Score: " + score + "%");
-        // Caller should process pass/fail and update student progress
         dispose();
     }
 }

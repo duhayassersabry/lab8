@@ -1,111 +1,135 @@
 package gui;
 
+import models.*;
 import services.CourseService;
 import data.JsonDatabaseManager;
-import models.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.ArrayList;
 
 public class InstructorDashboard extends JFrame {
     private Instructor instructor;
-    private DefaultListModel<String> model = new DefaultListModel<>();
-    private JList<String> list;
-    private JButton addCourseBtn, addLessonBtn, refreshBtn;
     private CourseService courseService = new CourseService();
-    // private JsonDatabaseManager db = new JsonDatabaseManager(); // Not needed if using CourseService
+    private DefaultListModel<String> courseModel = new DefaultListModel<>();
+    private JList<String> courseList = new JList<>(courseModel);
+    private DefaultListModel<String> lessonModel = new DefaultListModel<>();
+    private JList<String> lessonList = new JList<>(lessonModel);
 
-    public InstructorDashboard(Instructor ins){
-        this.instructor = ins;
-        setTitle("Instructor - " + ins.getEmail());
+    public InstructorDashboard(Instructor i) {
+        this.instructor = i;
+        setTitle("Instructor - " + i.getEmail());
         init();
         loadCourses();
     }
 
-    private void init(){
-        list = new JList<>(model);
-        addCourseBtn = new JButton("Add Course");
-        addLessonBtn = new JButton("Add Lesson");
-        refreshBtn = new JButton("Refresh");
+    private void init() {
+        JButton addCourse = new JButton("Add Course");
+        JButton addLesson = new JButton("Add Lesson");
+        JButton addQuestion = new JButton("Add Question");
+        JButton back = new JButton("Back");
+        JButton logout = new JButton("Logout");
 
-        addCourseBtn.addActionListener(e -> addCourse());
-        addLessonBtn.addActionListener(e -> addLesson());
-        refreshBtn.addActionListener(e -> loadCourses());
+        addCourse.addActionListener(e -> addCourse());
+        addLesson.addActionListener(e -> addLesson());
+        addQuestion.addActionListener(e -> addQuestion());
+        back.addActionListener(e -> { new LoginFrame().setVisible(true); dispose(); });
+        logout.addActionListener(e -> { new LoginFrame().setVisible(true); dispose(); });
 
-        JPanel p = new JPanel(new BorderLayout());
-        p.add(new JScrollPane(list), BorderLayout.CENTER);
+        courseList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) updateLessons();
+        });
 
-        JPanel south = new JPanel(new GridLayout(1,3));
-        south.add(addCourseBtn); south.add(addLessonBtn); south.add(refreshBtn);
-        p.add(south, BorderLayout.SOUTH);
+        JPanel left = new JPanel(new BorderLayout());
+        left.add(new JLabel("My Courses"), BorderLayout.NORTH);
+        left.add(new JScrollPane(courseList), BorderLayout.CENTER);
 
-        add(p);
-        setSize(700,500);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel right = new JPanel(new BorderLayout());
+        right.add(new JLabel("Lessons"), BorderLayout.NORTH);
+        right.add(new JScrollPane(lessonList), BorderLayout.CENTER);
+
+        JPanel ctrl = new JPanel(new GridLayout(5,1,6,6));
+        ctrl.add(addCourse); ctrl.add(addLesson); ctrl.add(addQuestion); ctrl.add(back); ctrl.add(logout);
+
+        setLayout(new GridLayout(1,3));
+        add(left); add(right); add(ctrl);
+        setSize(1000,500); setLocationRelativeTo(null); setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private void loadCourses(){
-        model.clear();
-        // Assuming courseService.allCourses(false) loads all courses
-        List<Course> courses = courseService.allCourses(false); 
-        for (Course c: courses) {
-            if (instructor.getId().equals(c.getInstructorId())) model.addElement(c.getCourseId() + " - " + c.getTitle() + " [" + c.getStatus()+"]");
+    private void loadCourses() {
+        courseModel.clear();
+        List<Course> all = courseService.allCourses(false);
+        for (Course c : all) {
+            if (instructor.getId().equals(c.getInstructorId())) courseModel.addElement(c.getCourseId() + " - " + c.getTitle() + " [" + c.getStatus() + "]");
         }
     }
 
-    private void addCourse(){
+    private void updateLessons() {
+        lessonModel.clear();
+        String sel = courseList.getSelectedValue();
+        if (sel==null) return;
+        String cid = sel.split(" - ")[0];
+        Course c = courseService.find(cid);
+        if (c==null) return;
+        for (Lesson L : c.getLessons()) lessonModel.addElement(L.getTitle());
+    }
+
+    private void addCourse() {
+        String title = JOptionPane.showInputDialog(this, "Course title:");
+        if (title==null || title.trim().isEmpty()) return;
         String id = "C" + System.currentTimeMillis();
-        String title = JOptionPane.showInputDialog(this,"Course title:");
-        if (title == null || title.trim().isEmpty()) return;
-        
-        // Input description for better data quality
-        String description = JOptionPane.showInputDialog(this,"Course description:");
-        if (description == null) description = "";
-        
-        Course c = new Course(id, title, description, instructor.getId());
-        courseService.addCourse(c); // Use addCourse or updateCourse for saving
+        Course c = new Course(id, title, "", instructor.getId());
+        courseService.addCourse(c);
         loadCourses();
     }
 
-    private void addLesson(){
-        String sel = list.getSelectedValue();
-        if (sel == null) { JOptionPane.showMessageDialog(this, "Select course."); return; }
-        
-        // 1. Extract Course ID
-        String courseId = sel.split(" - ")[0].trim();
-        Course c = courseService.find(courseId);
-        if (c == null) { JOptionPane.showMessageDialog(this, "Course not found."); return; }
-        
+    private void addLesson() {
+        String sel = courseList.getSelectedValue();
+        if (sel==null) { JOptionPane.showMessageDialog(this,"Select course"); return; }
+        String cid = sel.split(" - ")[0];
         String title = JOptionPane.showInputDialog(this,"Lesson title:");
-        if (title == null || title.trim().isEmpty()) return;
-
-        // Use a JTextArea for multi-line content input
-        JTextArea contentArea = new JTextArea(10, 30);
-        JScrollPane scrollPane = new JScrollPane(contentArea);
-        
-        int result = JOptionPane.showConfirmDialog(this, scrollPane, "Enter Lesson Content:", 
-            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        
-        String content = (result == JOptionPane.OK_OPTION) ? contentArea.getText() : null;
-        if (content == null || content.trim().isEmpty()) return;
-        
-        // 2. IMPORTANT: Generate unique lessonId and use the new constructor
-        String lessonId = "L" + System.currentTimeMillis();
-        Lesson l = new Lesson(lessonId, title, content); // Using the constructor with ID
-        
-        // 3. Update the Course object
-        c.getLessons().add(l);
-        
-        // 4. Persist the updated Course object
-        // NOTE: You should use an update method here, not addCourse again, 
-        // to prevent overwriting or creating duplicates if the service handles it simply.
-        courseService.updateCourse(c); 
-        
-        JOptionPane.showMessageDialog(this,"Lesson added successfully! (ID: " + lessonId + ").");
+        String content = JOptionPane.showInputDialog(this,"Lesson content:");
+        if (title==null) return;
+        Course c = courseService.find(cid);
+        Lesson L = new Lesson("L"+System.currentTimeMillis(), title, content);
+        c.getLessons().add(L);
+        courseService.save(c);
+        updateLessons();
     }
-    
-    // You should ensure CourseService has an updateCourse method 
-    // that saves the modified course list back to courses.json.
+
+    private void addQuestion() {
+        String selCourse = courseList.getSelectedValue();
+        String selLesson = lessonList.getSelectedValue();
+        if (selCourse==null || selLesson==null) { JOptionPane.showMessageDialog(this,"Select course and lesson"); return; }
+        String cid = selCourse.split(" - ")[0];
+        Course c = courseService.find(cid);
+        Lesson target = null;
+        for (Lesson L : c.getLessons()) if (L.getTitle().equals(selLesson)) { target = L; break; }
+        if (target==null) return;
+        String qtext = JOptionPane.showInputDialog(this,"Question text:");
+        if (qtext==null) return;
+        int type = JOptionPane.showOptionDialog(this, "Question type", "Type", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                new String[] {"True/False","Multiple Choice"}, "True/False");
+        Question q;
+        if (type==0) {
+            java.util.List<String> opts = new java.util.ArrayList<>(); opts.add("True"); opts.add("False");
+            int correct = JOptionPane.showOptionDialog(this,"Correct answer","Correct",JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE,null,new String[]{"True","False"},"True");
+            q = new Question(qtext, opts, correct==0?0:1);
+        } else {
+            String optsRaw = JOptionPane.showInputDialog(this,"Comma-separated options (e.g. A,B,C):");
+            if (optsRaw==null) return;
+            String[] parts = optsRaw.split(",");
+            java.util.List<String> opts = new ArrayList<>();
+            for (String p : parts) opts.add(p.trim());
+            String corr = JOptionPane.showInputDialog(this,"Index (0-based) of correct option:");
+            int idx = 0;
+            try { idx = Integer.parseInt(corr); } catch (Exception ex) { idx=0; }
+            q = new Question(qtext, opts, idx);
+        }
+        if (target.getQuiz()==null) target.setQuiz(new Quiz("Q"+System.currentTimeMillis()));
+        target.getQuiz().getQuestions().add(q);
+        courseService.save(c);
+        JOptionPane.showMessageDialog(this,"Question added");
+    }
 }

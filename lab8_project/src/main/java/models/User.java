@@ -1,10 +1,10 @@
 package models;
 
-public abstract class User {
+public class User {
     protected String id;
     protected String name;
     protected String email;
-    protected String password;
+    protected String password; 
     protected String role;
 
     public User() {}
@@ -16,6 +16,9 @@ public abstract class User {
     public String getEmail(){ return email; }
     public String getPassword(){ return password; }
     public String getRole(){ return role; }
-    public void setName(String n){ this.name=n; }
-    public void setPassword(String p){ this.password=p; }
+    public void setId(String s){ this.id=s; }
+    public void setName(String s){ this.name=s; }
+    public void setEmail(String s){ this.email=s; }
+    public void setPassword(String s){ this.password=s; }
+    public void setRole(String s){ this.role=s; }
 }

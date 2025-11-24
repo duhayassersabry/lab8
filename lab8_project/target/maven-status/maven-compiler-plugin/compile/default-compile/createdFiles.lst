@@ -11,13 +11,14 @@ gui\AdminDashboard.class
 gui\CertificateFrame.class
 gui\ChartFrame.class
 models\Certificate.class
-services\AnalyticsService$LessonStats.class
 gui\StudentDashboard$2.class
 gui\StudentDashboard.class
 models\Instructor.class
 models\StudentCourseProgress.class
 models\Admin.class
+data\JsonDatabaseManager$2.class
 models\Question.class
+gui\QuizDialog.class
 models\QuizAttempt.class
 services\UserService.class
 gui\QuizFrame.class

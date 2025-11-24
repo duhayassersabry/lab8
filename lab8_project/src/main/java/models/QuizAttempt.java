@@ -1,18 +1,22 @@
 package models;
+
 import java.util.Date;
 
 public class QuizAttempt {
-    private String studentId;
-    private String quizId;
-    private int score; // 0-100
-    private Date date;
+    private String lessonTitle;
+    private int score; 
+    private boolean firstAttempt;
+    private Date attemptedAt;
 
-    public QuizAttempt(){}
-    public QuizAttempt(String studentId,String quizId,int score){
-        this.studentId=studentId; this.quizId=quizId; this.score=score; this.date=new Date();
+    public QuizAttempt() {}
+    public QuizAttempt(String lessonTitle, int score, boolean firstAttempt) {
+        this.lessonTitle = lessonTitle;
+        this.score = score;
+        this.firstAttempt = firstAttempt;
+        this.attemptedAt = new Date();
     }
-    public String getStudentId(){return studentId;}
-    public String getQuizId(){return quizId;}
-    public int getScore(){return score;}
-    public Date getDate(){return date;}
+    public String getLessonTitle(){ return lessonTitle; }
+    public int getScore(){ return score; }
+    public boolean isFirstAttempt(){ return firstAttempt; }
+    public Date getAttemptedAt(){ return attemptedAt; }
 }

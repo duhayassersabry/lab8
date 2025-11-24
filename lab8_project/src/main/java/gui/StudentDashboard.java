@@ -2,31 +2,33 @@ package gui;
 
 import data.JsonDatabaseManager;
 import models.*;
-import services.CertificateService;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Dimension;
+import services.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 public class StudentDashboard extends JFrame {
-
     private Student student;
-    private JList<String> listAvailable;
-    private JList<String> listEnrolled;
+    private JsonDatabaseManager db = new JsonDatabaseManager();
+    private CourseService courseService = new CourseService();
+    private QuizService quizService = new QuizService();
+    private CertificateService certService = new CertificateService();
+
     private DefaultListModel<String> availModel = new DefaultListModel<>();
     private DefaultListModel<String> enrolledModel = new DefaultListModel<>();
-    private JButton btnEnroll, btnViewLessons, btnGenerateCertificate, btnBack, btnLogout;
+    private JList<String> listAvailable, listEnrolled;
     private JTable tblLessons;
-    private DefaultTableModel lessonsTableModel;
-    private JsonDatabaseManager db = new JsonDatabaseManager();
-    private CertificateService certService = new CertificateService();
+    private DefaultTableModel lessonsModel;
+    private JButton btnEnroll, btnViewLessons, btnGenerateCert, btnBack, btnLogout, btnInsights;
 
     public StudentDashboard(Student s) {
         this.student = s;
-        setTitle("Student Dashboard - " + s.getEmail());
+        setTitle("Student - " + s.getEmail());
         init();
         loadLists();
     }
@@ -34,75 +36,66 @@ public class StudentDashboard extends JFrame {
     private void init() {
         listAvailable = new JList<>(availModel);
         listEnrolled = new JList<>(enrolledModel);
-
         btnEnroll = new JButton("Enroll");
         btnViewLessons = new JButton("View Lessons");
-        btnGenerateCertificate = new JButton("Generate Certificate");
+        btnGenerateCert = new JButton("Generate Certificate");
         btnBack = new JButton("Back");
         btnLogout = new JButton("Logout");
+        btnInsights = new JButton("Insights");
 
-        btnEnroll.addActionListener(e -> enrollSelected());
-        btnViewLessons.addActionListener(e -> loadLessonsForSelectedCourse());
-        btnGenerateCertificate.addActionListener(e -> handleGenerateCertificate());
-        btnBack.addActionListener(e -> goBack());
-        btnLogout.addActionListener(e -> logout());
+        btnEnroll.addActionListener(e -> enroll());
+        btnViewLessons.addActionListener(e -> loadLessons());
+        btnGenerateCert.addActionListener(e -> generateCertificate());
+        btnBack.addActionListener(e -> { new LoginFrame().setVisible(true); dispose(); });
+        btnLogout.addActionListener(e -> { new LoginFrame().setVisible(true); dispose(); });
+        btnInsights.addActionListener(e -> showInsights());
 
-        // lessons table
-        lessonsTableModel = new DefaultTableModel(new Object[]{"Completed", "Lesson Title", "Content", "Solve"}, 0) {
+        lessonsModel = new DefaultTableModel(new Object[]{"Lesson", "Status", "Mark", "Action"}, 0) {
             @Override
-            public Class<?> getColumnClass(int col) {
-                if (col == 0) return Boolean.class;
+            public boolean isCellEditable(int r, int c) {
+                return c == 3;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int c) {
+                if (c == 2) return Integer.class;
                 return String.class;
             }
-            @Override
-            public boolean isCellEditable(int row, int col) {
-                return col == 0 || col == 3; // allow checkbox and Solve column (we use it as button trigger)
-            }
         };
-
-        tblLessons = new JTable(lessonsTableModel);
-        tblLessons.getColumnModel().getColumn(2).setMinWidth(200);
-        // the "Solve" column will contain text "Solve" — we will react when user double-clicks or clicks a separate button.
-
-        // We'll respond to double clicks on the "Solve" cell or button press approach.
+        tblLessons = new JTable(lessonsModel);
         tblLessons.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int row = tblLessons.rowAtPoint(evt.getPoint());
-                int col = tblLessons.columnAtPoint(evt.getPoint());
-                if (row >= 0 && col == 3) { // Solve column clicked
-                    solveBooleanQuestionForRow(row);
-                }
+                int r = tblLessons.rowAtPoint(evt.getPoint());
+                int c = tblLessons.columnAtPoint(evt.getPoint());
+                if (r >= 0 && c == 3) takeQuizForRow(r);
             }
         });
 
-        // Panels
         JPanel left = new JPanel(new BorderLayout());
-        left.add(new JLabel("Available Courses"), BorderLayout.NORTH);
+        left.add(new JLabel("Available"), BorderLayout.NORTH);
         left.add(new JScrollPane(listAvailable), BorderLayout.CENTER);
         left.add(btnEnroll, BorderLayout.SOUTH);
 
         JPanel center = new JPanel(new BorderLayout());
-        center.add(new JLabel("Enrolled Courses"), BorderLayout.NORTH);
+        center.add(new JLabel("Enrolled"), BorderLayout.NORTH);
         center.add(new JScrollPane(listEnrolled), BorderLayout.CENTER);
-
-        // Add buttons beneath enrolled list
-        JPanel centerButtons = new JPanel(new FlowLayout());
-        centerButtons.add(btnViewLessons);
-        centerButtons.add(btnGenerateCertificate);
-        centerButtons.add(btnBack);
-        centerButtons.add(btnLogout);
-        center.add(centerButtons, BorderLayout.SOUTH);
+        JPanel cb = new JPanel();
+        cb.add(btnViewLessons);
+        cb.add(btnGenerateCert);
+        cb.add(btnInsights);
+        cb.add(btnBack);
+        cb.add(btnLogout);
+        center.add(cb, BorderLayout.SOUTH);
 
         JPanel bottom = new JPanel(new BorderLayout());
-        bottom.add(new JLabel("Lessons (select enrolled course -> View Lessons). Click Solve to answer question."), BorderLayout.NORTH);
+        bottom.add(new JLabel("Lessons (Action -> Take Quiz)"), BorderLayout.NORTH);
         bottom.add(new JScrollPane(tblLessons), BorderLayout.CENTER);
 
         setLayout(new BorderLayout());
         add(left, BorderLayout.WEST);
         add(center, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
-
-        setSize(900, 600);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -110,133 +103,143 @@ public class StudentDashboard extends JFrame {
     private void loadLists() {
         availModel.clear();
         enrolledModel.clear();
-        List<Course> courses = db.loadCourses();
-        Set<String> enrolledSet = new HashSet<>(student.getEnrolledCourses());
-
-        for (Course c : courses) {
+        for (Course c : courseService.allCourses(true)) {
             String label = c.getCourseId() + " - " + c.getTitle();
-            if (!enrolledSet.contains(c.getCourseId())) availModel.addElement(label);
-            else enrolledModel.addElement(label);
+            if (student.getEnrolledCourses().contains(c.getCourseId())) enrolledModel.addElement(label);
+            else availModel.addElement(label);
         }
     }
 
-    private void enrollSelected() {
+    private void enroll() {
         String sel = listAvailable.getSelectedValue();
-        if (sel == null) { JOptionPane.showMessageDialog(this, "Select a course first."); return; }
-        String courseId = sel.split(" - ")[0];
-        if (student.getEnrolledCourses().contains(courseId)) { JOptionPane.showMessageDialog(this, "Already enrolled."); return; }
-        student.getEnrolledCourses().add(courseId);
-        student.getProgress().putIfAbsent(courseId, new HashMap<>());
-        db.updateUser(student);
-        loadLists();
-        JOptionPane.showMessageDialog(this, "Enrolled in " + courseId);
+        if (sel == null) {
+            JOptionPane.showMessageDialog(this, "Select course");
+            return;
+        }
+        String id = sel.split(" - ")[0];
+        if (!student.getEnrolledCourses().contains(id)) {
+            student.getEnrolledCourses().add(id);
+            student.getProgress().putIfAbsent(id, new HashMap<>());
+            new JsonDatabaseManager().updateUser(student);
+            loadLists();
+            JOptionPane.showMessageDialog(this, "Enrolled");
+        }
     }
 
-    // ------------------ LESSONS & BOOLEAN QUESTION ------------------------
-    private void loadLessonsForSelectedCourse() {
+    private void loadLessons() {
+        lessonsModel.setRowCount(0);
         String sel = listEnrolled.getSelectedValue();
-        if (sel == null) { JOptionPane.showMessageDialog(this, "Select an enrolled course."); return; }
-        String courseId = sel.split(" - ")[0];
-        Course c = db.findCourseById(courseId);
-        if (c == null) { JOptionPane.showMessageDialog(this, "Course not found."); return; }
-
-        lessonsTableModel.setRowCount(0);
-        Map<String, Boolean> prog = student.getProgress().getOrDefault(courseId, new HashMap<>());
-
-        for (Lesson L : c.getLessons()) {
+        if (sel == null) {
+            JOptionPane.showMessageDialog(this, "Select enrolled course");
+            return;
+        }
+        String cid = sel.split(" - ")[0];
+        Course c = courseService.find(cid);
+        if (c == null) return;
+        Map<String, Boolean> prog = student.getProgress().getOrDefault(cid, new HashMap<>());
+        Map<String, Integer> marks = computeBestMarksForCourse(cid);
+        List<Lesson> lessons = c.getLessons();
+        for (int i = 0; i < lessons.size(); i++) {
+            Lesson L = lessons.get(i);
             boolean done = prog.getOrDefault(L.getTitle(), false);
-            // "Solve" column text
-            lessonsTableModel.addRow(new Object[]{ done, L.getTitle(), L.getContent(), "Solve" });
+            String status;
+            if (done) status = "Completed";
+            else if (i == 0 || prog.getOrDefault(lessons.get(i - 1).getTitle(), false)) status = "Available";
+            else status = "Locked";
+            Integer m = marks.getOrDefault(L.getTitle(), -1);
+            lessonsModel.addRow(new Object[]{L.getTitle(), status, m >= 0 ? m : null, status.equals("Available") ? "Take Quiz" : "-"});
+        }
+        tblLessons.putClientProperty("currentCourseId", cid);
+    }
+
+    private Map<String, Integer> computeBestMarksForCourse(String cid) {
+        Map<String, Integer> map = new HashMap<>();
+        for (QuizAttempt a : student.getAttempts().getOrDefault(cid, new ArrayList<>())) {
+            map.put(a.getLessonTitle(), Math.max(map.getOrDefault(a.getLessonTitle(), 0), a.getScore()));
+        }
+        return map;
+    }
+
+    private void takeQuizForRow(int row) {
+        String cid = (String) tblLessons.getClientProperty("currentCourseId");
+        if (cid == null) return;
+        String lessonTitle = (String) lessonsModel.getValueAt(row, 0);
+        String status = (String) lessonsModel.getValueAt(row, 1);
+        if (!"Available".equals(status)) {
+            JOptionPane.showMessageDialog(this, "Lesson locked");
+            return;
+        }
+        Course c = courseService.find(cid);
+        Lesson L = null;
+        for (Lesson l : c.getLessons()) if (l.getTitle().equals(lessonTitle)) L = l;
+        if (L == null || L.getQuiz() == null) {
+            JOptionPane.showMessageDialog(this, "No quiz");
+            return;
+        }
+        Quiz q = L.getQuiz();
+        if (!quizService.mayRetakeFirstThreshold(student, cid, lessonTitle, q.getPassingPercentage())) {
+            JOptionPane.showMessageDialog(this, "You passed >= " + q.getPassingPercentage() + "% on first attempt; retake not allowed.");
+            return;
+        }
+        QuizDialog dialog = new QuizDialog(this, q);
+        dialog.setVisible(true);
+        if (!dialog.isSubmitted()) return;
+        List<Integer> answers = dialog.getSelectedIndices();
+        int score = quizService.evaluate(q, answers);
+        quizService.recordAttempt(student, cid, lessonTitle, score);
+        if (score >= q.getPassingPercentage()) {
+            student.getProgress().computeIfAbsent(cid, k -> new HashMap<>()).put(lessonTitle, true);
+            new JsonDatabaseManager().updateUser(student);
+            JOptionPane.showMessageDialog(this, "Passed: " + score + "%");
+        } else JOptionPane.showMessageDialog(this, "Failed: " + score + "% (need " + q.getPassingPercentage() + "%)");
+        loadLessons();
+    }
+
+    private void generateCertificate() {
+        String cid = (String) tblLessons.getClientProperty("currentCourseId");
+        if (cid == null) {
+            JOptionPane.showMessageDialog(this, "Select course and load lessons first");
+            return;
+        }
+        Course course = courseService.find(cid);
+        if (course == null) return;
+
+        Map<String, Boolean> prog = student.getProgress().getOrDefault(cid, new HashMap<>());
+        boolean allPassed = course.getLessons().stream().allMatch(l -> prog.getOrDefault(l.getTitle(), false));
+        if (!allPassed) {
+            JOptionPane.showMessageDialog(this, "Complete all lessons first");
+            return;
         }
 
-        tblLessons.putClientProperty("currentCourseId", courseId);
+        Certificate cert;
+        try {
+            cert = certService.getOrGenerateCertificate(student, course);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Certificate error: " + ex.getMessage());
+            return;
+        }
 
-        // update Generate certificate button visibility:
-        updateCertificateButtonState(courseId);
-    }
+        JOptionPane.showMessageDialog(this, "Certificate: " + cert.getCertificateId() + " | Total marks: " + cert.getTotalMarks());
 
-    private void solveBooleanQuestionForRow(int row) {
-        Object obj = tblLessons.getClientProperty("currentCourseId");
-        if (obj == null) { JOptionPane.showMessageDialog(this, "No course selected."); return; }
-        String courseId = (String) obj;
-        String title = (String) lessonsTableModel.getValueAt(row, 1);
-
-        // Simple deterministic boolean question:
-        // "Is the number of characters in the lesson title even?"
-        int len = title.length();
-        boolean correctAnswer = (len % 2 == 0);
-
-        String q = "Is the number of characters in the lesson title (" + len + ") even?\nChoose True or False.";
-        int choice = JOptionPane.showOptionDialog(this, q, "Answer question",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                new String[] {"True","False"}, "True");
-
-        boolean answeredTrue = (choice == JOptionPane.YES_OPTION);
-        if (answeredTrue == correctAnswer) {
-            // mark done
-            lessonsTableModel.setValueAt(true, row, 0);
-            saveLessonProgressForDisplayedCourse(); // persist
-            JOptionPane.showMessageDialog(this, "Correct! Lesson marked as completed.");
-            // check for certificate unlock
-            updateCertificateButtonState(courseId);
-        } else {
-            JOptionPane.showMessageDialog(this, "Incorrect. Try again later.");
+        try {
+            String out = "certs/" + cert.getCertificateId() + ".pdf";
+            certService.exportCertificatePdf(cert, out);
+            int open = JOptionPane.showConfirmDialog(this, "Open certificate PDF?", "View", JOptionPane.YES_NO_OPTION);
+            if (open == JOptionPane.YES_OPTION) Desktop.getDesktop().open(new File(out));
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Cannot open PDF: " + ex.getMessage());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "PDF fail: " + ex.getMessage());
         }
     }
 
-    private void saveLessonProgressForDisplayedCourse() {
-        Object obj = tblLessons.getClientProperty("currentCourseId");
-        if (obj == null) return;
-        String courseId = (String) obj;
-        Map<String, Boolean> prog = student.getProgress().computeIfAbsent(courseId, k -> new HashMap<>());
-        for (int r = 0; r < lessonsTableModel.getRowCount(); r++) {
-            String t = (String) lessonsTableModel.getValueAt(r, 1);
-            Boolean done = (Boolean) lessonsTableModel.getValueAt(r, 0);
-            prog.put(t, done != null && done);
+    private void showInsights() {
+        String sel = listEnrolled.getSelectedValue();
+        if (sel == null) {
+            JOptionPane.showMessageDialog(this, "Select course");
+            return;
         }
-        db.updateUser(student);
-    }
-
-    private boolean allLessonsCompleted(String courseId) {
-        Course c = db.findCourseById(courseId);
-        if (c == null) return false;
-        Map<String, Boolean> prog = student.getProgress().getOrDefault(courseId, new HashMap<>());
-        for (Lesson L : c.getLessons()) {
-            if (!prog.getOrDefault(L.getTitle(), false)) return false;
-        }
-        return true;
-    }
-
-    private void updateCertificateButtonState(String courseId) {
-        btnGenerateCertificate.setEnabled(allLessonsCompleted(courseId));
-    }
-
-    private void handleGenerateCertificate() {
-        Object obj = tblLessons.getClientProperty("currentCourseId");
-        if (obj == null) { JOptionPane.showMessageDialog(this, "Select an enrolled course first."); return; }
-        String courseId = (String) obj;
-        Course c = db.findCourseById(courseId);
-        if (c == null) { JOptionPane.showMessageDialog(this, "Course not found."); return; }
-        if (!allLessonsCompleted(courseId)) { JOptionPane.showMessageDialog(this, "Complete all lessons first."); return; }
-
-        // generate certificate using the student's email only
-        CertificateService service = new CertificateService();
-        Certificate cert = service.generateCertificate(student, c);
-
-        // show certificate
-        JOptionPane.showMessageDialog(this, "Certificate generated: " + cert.getCertificateId() + "\nIssued to: " + cert.getStudentEmail());
-    }
-
-    // --------- Back & Logout ----------
-    private void goBack() {
-        // Back returns to LoginFrame for simplicity
-        new gui.LoginFrame().setVisible(true);
-        dispose();
-    }
-
-    private void logout() {
-        // clear any session (no session store here) and open login
-        new gui.LoginFrame().setVisible(true);
-        dispose();
+        String cid = sel.split(" - ")[0];
+        new ChartFrame("Lesson Marks", computeBestMarksForCourse(cid)).setVisible(true);
     }
 }
